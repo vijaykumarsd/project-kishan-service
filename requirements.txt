@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+adk
+google-cloud-aiplatform
+google-cloud-speech
+google-cloud-texttospeech
+python-multipart
+ Pillow
