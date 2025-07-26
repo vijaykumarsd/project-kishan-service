@@ -78,7 +78,7 @@ try:
         with open(absolute_service_account_path, 'r') as f:
             firebase_config_from_file = json.load(f)
 
-        storage_bucket_name = "project-kisan-app.appspot.com"
+        storage_bucket_name = "project-kisan-app-467108.appspot.com"
         print(storage_bucket_name)
 
         firebase_admin.initialize_app(cred, {
