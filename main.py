@@ -2,12 +2,13 @@
 import os
 import uuid
 import asyncio
-from fastapi import FastAPI, Form, UploadFile, File, Depends, Header, HTTPException, status
+from fastapi import FastAPI, Form, UploadFile, File, Depends, Header, HTTPException, status, Query
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv, find_dotenv
 import logging
 import json
 from typing import Annotated
+import re
 
 # Firebase Imports
 import firebase_admin
@@ -20,8 +21,12 @@ from firebase_admin import auth
 from google.adk.runners import Runner
 # Import InMemorySessionService for local session management
 from google.adk.sessions import InMemorySessionService
-# Import necessary types for the agent's input content
 from google.genai import types
+from starlette.responses import JSONResponse
+
+from basemodel_dto.weather_responsedto import WeatherResponse
+from specialized_agent.router_agent import route_and_process
+from tools.weather_tool import get_weather_forecast
 
 # --- Configure Logging ---
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
@@ -301,6 +306,12 @@ async def simple_route(
             detail=f"Failed to get response from agent: {str(e)}"
         )
 
+@app.get("/weather", response_model=WeatherResponse)
+def fetch_weather(location: str = Query(..., example="Bangalore")):
+    try:
+        return get_weather_forecast(location)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/chat-history")
 async def get_chat_history(

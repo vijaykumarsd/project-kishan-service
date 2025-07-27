@@ -12,6 +12,8 @@ from google.adk.sessions import InMemorySessionService
 from vertexai.preview.reasoning_engines import AdkApp
 from google.adk.agents import LlmAgent, SequentialAgent
 from google.adk.tools import FunctionTool
+from tools.calendar_tool import crop_calendar_tool
+
 
 print("DEBUG: Inspecting FunctionTool.__init__ signature:")
 try:
@@ -110,7 +112,6 @@ summary_agent = LlmAgent(
 _internal_session_service = InMemorySessionService()
 
 # ---------------------- Async Tool Wrapper Helper Function ----------------------
-# This helper remains the same as it needs to accept multimodal content to run internal agents.
 async def run_agent_and_get_text(agent: LlmAgent, input_content: genai_types.Content):
     """Helper to run an LlmAgent and extract its final text response."""
     print(f"DEBUG: Calling internal agent '{agent.name}' with input_content: '{input_content}'")
@@ -225,7 +226,6 @@ async def summarize_output_tool(json_data: str) -> str:
     input_content = genai_types.Content(role="user", parts=[genai_types.Part(text=json_data)])
     return await run_agent_and_get_text(summary_agent, input_content)
 
-# ---------------------- Sequential Agent Definition (Optional) ----------------------
 step1_diagnosis_agent = LlmAgent(
     model=MODEL_NAME,
     name="Step1_Diagnose",
@@ -318,8 +318,6 @@ async def crop_market_pipeline_tool(query: str) -> str:
         traceback.print_exc()
         return f"Error processing request with {pipeline_agent.name}: {str(e)}"
 
-# ---------------------- Orchestrator Agent Definition ----------------------
-
 kisan_orchestrator_agent = LlmAgent(
     model=MODEL_NAME,
     name="KisanOrchestrator",
@@ -343,6 +341,8 @@ kisan_orchestrator_agent = LlmAgent(
             - Use `market_analysis_tool` if the query is about crop prices, market trends, or sell/hold recommendations.
             - Use `scheme_navigator_tool` if the query is about government schemes.
             - Use `summarize_output_tool` if you receive JSON data that needs summarization.
+            - Use `get_weather_tool` if user asks about weather, forecast, or rain.
+            - Use `crop_calendar_tool` if user asks about when to plant or harvest a crop.
 
     **Important Considerations:**
     - Do NOT attempt to use the 'crop_market_pipeline_tool' directly at this time due to known framework limitations. If a query requires both diagnosis and market analysis, you must decide to call each tool individually and then summarize their combined output.
@@ -353,7 +353,9 @@ kisan_orchestrator_agent = LlmAgent(
         FunctionTool(market_analysis_tool),
         FunctionTool(scheme_navigator_tool),
         FunctionTool(summarize_output_tool),
-        FunctionTool(crop_market_pipeline_tool), # UNCOMMENT IF YOU WANT TO TEST THE PIPELINE TOOL
+        # FunctionTool(get_weather_forecast()),
+        FunctionTool(crop_calendar_tool),
+        # FunctionTool(crop_market_pipeline_tool), # UNCOMMENT IF YOU WANT TO TEST THE PIPELINE TOOL
     ],
 )
 

@@ -6,7 +6,6 @@ Routes farmer's multimodal queries to the appropriate agricultural sub-agents.
 import os
 from dotenv import load_dotenv
 from google.adk.agents import LlmAgent
-# noinspection PyInterpreter
 from google.adk.tools import agent_tool
 
 # Load environment variables

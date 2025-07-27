@@ -20,3 +20,4 @@ loguru>=0.7.3
 # Optional: For enhanced functionality
 pydantic>=2.11.7
 httpx>=0.28.1
+firebase-admin>=7.0.0
