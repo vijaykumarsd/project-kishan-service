@@ -336,7 +336,12 @@ async def get_chat_history(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to retrieve chat history: {str(e)}"
         )
-
+@app.get("/api/ping")
+async def ping():
+    """
+    Health check endpoint to verify if the API server is running.
+    """
+    return {"status": "ok", "message": "API is up and running!"}
 
 # --- Uvicorn Entry Point ---
 if __name__ == "__main__":
@@ -345,3 +350,5 @@ if __name__ == "__main__":
     port = int(os.getenv("PORT", 8005))
     print(f"Starting FastAPI app on http://127.0.0.1:{port}/")
     uvicorn.run("main:app", host="127.0.0.1", port=port, reload=True)
+
+
