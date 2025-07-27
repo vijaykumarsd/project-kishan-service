@@ -22,10 +22,8 @@ from google.adk.runners import Runner
 # Import InMemorySessionService for local session management
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
-from starlette.responses import JSONResponse
 
 from basemodel_dto.weather_responsedto import WeatherResponse
-from specialized_agent.router_agent import route_and_process
 from tools.weather_tool import get_weather_forecast
 
 # --- Configure Logging ---
